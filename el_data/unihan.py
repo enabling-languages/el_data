@@ -9,8 +9,8 @@ class Unihan(UCD):
 
    conn = None
 
-   def __init__(self, char, flat=False):
-      data_db = "data.db" if flat else "data.db"
+   def __init__(self, char):
+      data_db = "./data.db"
       if Unihan.conn is None:
          try:
             Unihan.conn = _sqlite3.connect(data_db)
