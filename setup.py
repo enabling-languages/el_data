@@ -14,7 +14,7 @@ setup(
         'lxml',
         'pyicu',
         'rich',
-        'sqlite3'
+        'pysqlite3'
     ],
     classifiers=[
         'Development Status :: 1 - Planning',
