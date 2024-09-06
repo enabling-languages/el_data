@@ -2,6 +2,7 @@
 # import numpy as _np
 import sqlite3 as _sqlite3
 import icu as _icu
+import os.path as _path
 
 class Encodings():
     conn = None
@@ -9,7 +10,8 @@ class Encodings():
     _collator.setAttribute(_icu.UCollAttribute.NUMERIC_COLLATION, _icu.UCollAttributeValue.ON)
 
     def __init__(self, codepoint='0x00', encoding='iso-8859-1'):
-        data_db = "data.db"
+        BASE_DIR = _path.dirname(_path.abspath(__file__))
+        data_db = _path.join(BASE_DIR, "data.db")
         if Encodings.conn is None:
             try:
                 Encodings.conn = _sqlite3.connect(data_db)
