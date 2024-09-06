@@ -13,8 +13,7 @@ setup(
         'hexdump',
         'lxml',
         'pyicu',
-        'rich',
-        'pysqlite3'
+        'rich'
     ],
     classifiers=[
         'Development Status :: 1 - Planning',
