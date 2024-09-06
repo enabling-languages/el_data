@@ -4,13 +4,15 @@ from .data import UCD
 from functools import partialmethod as _partialmethod
 # import json as _json
 from rich.console import Console as _Console
+import os.path as _path
 
 class Unihan(UCD):
 
    conn = None
 
    def __init__(self, char):
-      data_db = "./data.db"
+      BASE_DIR = _path.dirname(_path.abspath(__file__))
+      data_db = _path.join(BASE_DIR, "data.db")
       if Unihan.conn is None:
          try:
             Unihan.conn = _sqlite3.connect(data_db)
