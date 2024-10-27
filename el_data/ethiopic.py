@@ -77,11 +77,11 @@ class EthiopicUCD(UCD):
             'ሳብዕ': 'Sabi',
             'ሳምን': 'Samin',
             'ዘመደ-ግዕዝ': 'Zemede-Geʽez',
-            'ዘመደ-ካዕብ': 'Zemede-Kaib',
+            'ዘመደ-ካዕብ': 'Zemede-Kaʽeb',
             'ዘመደ-ሣልስ': 'Zemede-Salis',
             'ዘመደ-ራብዕ': 'Zemede-Rabi',
             'ዘመደ-ኃምስ': 'Zemede-Hamis',
-            'ዘመደ-ባዕድ': 'Zemede-'
+            'ዘመደ-ባዕድ': 'Zemede-Baʽed'
         }
     }
 
@@ -112,7 +112,7 @@ class EthiopicUCD(UCD):
       )
 
     def _order_family(self):
-        query = f"SELECT ቤተሰብ, orders FROM ethiopic WHERE syllables = '{self._char}'"
+        query = f"SELECT ቤተሰብ, ቤት FROM ethiopic WHERE ሆሄ = '{self._char}'"
         return EthiopicUCD.cursor.execute(query).fetchall()[0]
 
     def is_ethiopic_numeral(self, ethNumber):
@@ -127,7 +127,7 @@ class EthiopicUCD(UCD):
         return self._family
 
     def get_family_members(self):
-        query = f"SELECT syllables FROM ethiopic WHERE ቤተሰብ = '{self._family}'"
+        query = f"SELECT ሆሄ FROM ethiopic WHERE ቤተሰብ = '{self._family}'"
         result = EthiopicUCD.cursor.execute(query).fetchall()
         return result
 
@@ -137,7 +137,7 @@ class EthiopicUCD(UCD):
         return self._order
 
     def get_order_members(self):
-        query = f"SELECT syllables FROM ethiopic WHERE orders = '{{self._order}}'"
+        query = f"SELECT ሆሄ FROM ethiopic WHERE ቤት = '{{self._order}}'"
         result = EthiopicUCD.cursor.execute(query).fetchall()
         return result
 
