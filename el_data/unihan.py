@@ -217,3 +217,15 @@ class Unihan(UCD):
       else:
          console.print('[red bold]Property metadata unavailable.')
       return None
+
+class UnihanString(UCDString):
+    def __init__(self, chars):
+        self._chars = [Unihan(char) for char in chars]
+        self.data = [c.data for c in self._chars]
+
+    def __str__(self):
+        return "".join(self.characters())
+
+    def __repr__(self):
+        class_name = type(self).__name__
+        return f"{class_name}(chars={self.characters()})"

@@ -65,3 +65,40 @@ class Encodings():
         record = self.codepoint_data(self._codepoint)
         data = list({k for k, v in record.items() if v == character_codepoint})
         return self._sorted(data)
+
+
+
+def get_surrogate_pair(char, as_int=False, as_char=False):
+    char = chr(char) if isinstance(char, int) else char
+    pair = char.encode('utf-16-be', 'surrogatepass').hex(' ', 2).upper().split()
+    if as_char:
+        return [chr(int(i, 16)) for i in pair]
+    return [int(lone, 16) for lone in pair] if as_int else pair
+
+# print(get_surrogate_pair('𐀀'))
+# print(get_surrogate_pair('𐀀', True))
+# print(get_surrogate_pair('\U00010000'))
+# print(get_surrogate_pair('\U00010000', True))
+# print(get_surrogate_pair(0x10000))
+# print(get_surrogate_pair(0x10000, True))
+# print(get_surrogate_pair('𐀀', as_char=True))
+
+def explore_surrogates(surrogate_char, emoji_only=False):
+    surrogate_char = chr(surrogate_char) if isinstance(surrogate_char, int) else surrogate_char
+    if not 0xD800 <= ord(surrogate_char) <= 0xDFFF:
+        return None
+    non_bmp = _icu.UnicodeSet(r'[[\p{Emoji}]-[\u0000-\uFFFF]]') if emoji_only else _icu.UnicodeSet(r'[[[\p{Any}]-[\u0000-\uFFFF]]-[\p{Unassigned}]]')
+    surrogate_byte = surrogate_char.encode('utf-16-be', 'surrogatepass')
+    if 0xD800 <= ord(surrogate_char) <= 0xDBFF:
+        return [e for e in list(non_bmp) if e.encode('utf-16-be').startswith(surrogate_byte)]
+    return [e for e in list(non_bmp) if e.encode('utf-16-be').endswith(surrogate_byte)]
+
+# len(explore_surrogates('\ud83d'))
+# len(explore_surrogates('\ud83d', True))
+# len(explore_surrogates(0xd83d))
+# len(explore_surrogates(0xd83d, True))
+# len(explore_surrogates('\udc00'))
+# len(explore_surrogates('\udc00', True))
+# len(explore_surrogates(0xdc00))
+# len(explore_surrogates(0xdc00, True))
+
