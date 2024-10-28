@@ -111,6 +111,16 @@ class EthiopicUCD(UCD):
             self.bidi_class_code(),
             self.combining_class()
       )
+      self.entities = (
+            self._char,
+            self._xchar(),
+            self._dchar(),
+            self._ochar(),
+            self._bchar(),
+            self._html_entity(),
+            self._dec_ncr(exclude_ascii=False, as_char=False),
+            self._hex_ncr(exclude_ascii=False, as_char=False)
+        )
 
     def _order_family(self):
         query = f"SELECT ቤተሰብ, ቤት FROM ethiopic WHERE ሆሄ = '{self._char}'"
