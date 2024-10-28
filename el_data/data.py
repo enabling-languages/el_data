@@ -128,7 +128,7 @@ class UCD():
         return f'&#{dchar:04};'
 
     def _html_entity(self):
-        dchar = ord(char = self._char)
+        dchar = ord(self._char)
         entity = _html.entities.codepoint2name.get(dchar)
         return f'&{entity};' if entity else '-'
 
