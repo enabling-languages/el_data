@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='el_data',
-    version='0.2.0',
+    version='0.2.2',
     description='Helper functions for accessing internationalisation data',
     url='https://github.com/enabling-languages/el_data',
     author='Andrew Cunningham',

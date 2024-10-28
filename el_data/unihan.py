@@ -1,6 +1,6 @@
 import icu as _icu
 import sqlite3 as _sqlite3
-from .data import UCD
+from .data import UCD, UCDString
 from functools import partialmethod as _partialmethod
 # import json as _json
 from rich.console import Console as _Console
