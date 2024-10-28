@@ -130,7 +130,7 @@ class EthiopicUCD(UCD):
     def get_family_members(self):
         query = f"SELECT ሆሄ FROM ethiopic WHERE ቤተሰብ = '{self._family}'"
         result = EthiopicUCD.cursor.execute(query).fetchall()
-        return result
+        return [t[0] for t in result]
 
     def get_order(self, label = False, romanised = False):
         if romanised:
@@ -140,7 +140,7 @@ class EthiopicUCD(UCD):
     def get_order_members(self):
         query = f"SELECT ሆሄ FROM ethiopic WHERE ቤት = '{self._order}'"
         result = EthiopicUCD.cursor.execute(query).fetchall()
-        return result
+        return [t[0] for t in result]
 
 class EthiopicUCDString(UCDString):
     def __init__(self, chars):
@@ -153,3 +153,9 @@ class EthiopicUCDString(UCDString):
             # return 0x1369 <= ord(ethNumber) <= 0x137C
             return ethNumber in EthiopicUCD.NUMERALS
         return set(ethNumber).issubset(EthiopicUCD.NUMERALS)
+
+    def get_order(self):
+        return [c.get_order() for c in self._chars]
+
+    def get_family(self):
+        return [c.get_family() for c in self._chars]
