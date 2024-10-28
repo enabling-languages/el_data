@@ -138,7 +138,7 @@ class EthiopicUCD(UCD):
         return self._order
 
     def get_order_members(self):
-        query = f"SELECT ሆሄ FROM ethiopic WHERE ቤት = '{{self._order}}'"
+        query = f"SELECT ሆሄ FROM ethiopic WHERE ቤት = '{self._order}'"
         result = EthiopicUCD.cursor.execute(query).fetchall()
         return result
 
