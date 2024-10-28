@@ -1,4 +1,5 @@
 import icu as _icu
+import sqlite3 as _sqlite3
 from functools import partialmethod as _partialmethod
 from rich.console import Console as _Console
 from rich.table import Table as _Table, box as _box

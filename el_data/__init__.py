@@ -4,11 +4,12 @@ el_data
 Helper functions for accessing internationalisation data.
 """
 
-__version__ = "0.2.2"
+__version__ = "0.2.3"
 __author__ = 'Andrew Cunningham'
 __credits__ = 'Enabling Languages'
 
 from .unihan import *
+from .ethiopic import *
 from .encodings import *
 from .data import *
 
