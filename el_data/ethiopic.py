@@ -123,8 +123,10 @@ class EthiopicUCD(UCD):
         )
 
     def _order_family(self):
-        query = f"SELECT ቤተሰብ, ቤት FROM ethiopic WHERE ሆሄ = '{self._char}'"
-        return EthiopicUCD.cursor.execute(query).fetchall()[0]
+        if self._char in self.SYLLABLES:
+            query = f"SELECT ቤተሰብ, ቤት FROM ethiopic WHERE ሆሄ = '{self._char}'"
+            return EthiopicUCD.cursor.execute(query).fetchall()[0]
+        return (None, None)
 
     def is_ethiopic_numeral(self, ethNumber):
         # return 0x1369 <= ord(ethNumber) <= 0x137C
@@ -158,14 +160,34 @@ class EthiopicUCDString(UCDString):
         self.data = [c.data for c in self._chars]
         self.entities = [c.entities for c in self._chars]
 
+    def get_family(self, as_string: bool = False):
+        results =  [c.get_family() for c in self._chars]
+        if as_string:
+            return "".join(results)
+        return results
+
+    def get_family_at_index(self, idx):
+        pass
+
+    def get_order(self):
+        return [c.get_order() for c in self._chars]
+
+    def get_order_at_index(self, idx):
+        pass
+
     def is_ethiopic_numeral(self, ethNumber):
         if len(ethNumber) == 1:
             # return 0x1369 <= ord(ethNumber) <= 0x137C
             return ethNumber in EthiopicUCD.NUMERALS
         return set(ethNumber).issubset(EthiopicUCD.NUMERALS)
 
-    def get_order(self):
-        return [c.get_order() for c in self._chars]
+    def set_family(self, family):
+        pass
 
-    def get_family(self):
-        return [c.get_family() for c in self._chars]
+    def set_order(self, order):
+        # changes every syllable of the string to the order indicated
+        pass
+
+    def set_order_at_index(self, int):
+        # like setOrder but for a string
+        pass
