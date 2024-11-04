@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='el_data',
-    version='0.2.3',
+    version='0.3.0',
     description='Helper functions for accessing internationalisation data',
     url='https://github.com/enabling-languages/el_data',
     author='Andrew Cunningham',
@@ -13,6 +13,7 @@ setup(
         'hexdump',
         'lxml',
         'pyicu',
+        'requests',
         'rich'
     ],
     include_package_data=True,
@@ -24,6 +25,7 @@ setup(
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
         'Topic :: Software Development :: Internationalization',
         'Topic :: Software Development :: Localization',
         'Topic :: Text Processing :: Linguistic',

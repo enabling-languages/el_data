@@ -4,6 +4,7 @@ from functools import partialmethod as _partialmethod
 from rich.console import Console as _Console
 from rich.table import Table as _Table, box as _box
 from .data import UCD, UCDString, BINARY_PROPERTIES, BLOCKS
+from .cldr import CLDR
 import os.path as _path
 
 class EthiopicUCD(UCD):
