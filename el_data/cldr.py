@@ -26,6 +26,7 @@ class CLDR():
         self._locale_id = locale_id.replace('-', '_')
         self._use_sldr = use_sldr
         self._ldml = self._main_ldml()
+        self._ld = _icu.LocaleData(self._locale_id)
 
     def __repr__(self):
         class_name = type(self).__name__
@@ -42,10 +43,17 @@ class CLDR():
             return tree
         return None
 
+    def _other_ldml(self, url):
+        response = _requests.get(url)
+        if response.status_code not in (404, 500):
+            tree = _ET.fromstring(response.text)
+            return tree
+        return None
+
     def get_exemplars(self):
         exemplar_data = dict()
         tree = self._ldml
-        if tree:
+        if tree is not None:
             result = tree.findall('characters/exemplarCharacters')
             for element in result:
                 type = element.attrib.get('type', 'main')
@@ -53,4 +61,21 @@ class CLDR():
                     if element.text and element.text != '↑↑↑':
                         exemplar_data[type] = _icu.UnicodeSet(rf'{element.text}')
             return exemplar_data
+        return None
+
+    def get_main_exemplars(self, mode='uset'):
+        tree = self._ldml
+        if tree is not None:
+            result = tree.findall('characters/exemplarCharacters')
+            for element in result:
+                type = element.attrib.get('type', 'main')
+                if type == "main" and element.text and element.text != '↑↑↑':
+                    data = _icu.UnicodeSet(rf'{element.text}')
+                    match mode:
+                        case 'list':
+                            return list(data)
+                        case 'pattern':
+                            return data.toPattern()
+                        case '_':
+                            return data
         return None

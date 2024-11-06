@@ -70,20 +70,20 @@ class EthiopicUCD(UCD):
             'ፐ': {'label':'ፕሳ', 'romanised': 'ፕሳ'}
         },
         'orders': {
-            'ግዕዝ': 'Geʽez', 
-            'ካዕብ': 'Kaib',
-            'ሣልስ': 'Salis',
-            'ራዕብ': 'Rabi',
-            'ኃምስ': 'Hamis',
-            'ሳድስ': 'Sadis',
-            'ሳብዕ': 'Sabi',
-            'ሳምን': 'Samin',
-            'ዘመደ-ግዕዝ': 'Zemede-Geʽez',
-            'ዘመደ-ካዕብ': 'Zemede-Kaʽeb',
-            'ዘመደ-ሣልስ': 'Zemede-Salis',
-            'ዘመደ-ራብዕ': 'Zemede-Rabi',
-            'ዘመደ-ኃምስ': 'Zemede-Hamis',
-            'ዘመደ-ባዕድ': 'Zemede-Baʽed'
+            'ግዕዝ': {'enum': 1, 'romanised': 'Geʽez'},
+            'ካዕብ': {'enum': 2, 'romanised': 'Kaib'},
+            'ሣልስ': {'enum': 3, 'romanised': 'Salis'},
+            'ራዕብ': {'enum': 4, 'romanised': 'Rabi'},
+            'ኃምስ': {'enum': 5, 'romanised': 'Hamis'},
+            'ሳድስ': {'enum': 6, 'romanised': 'Sadis'},
+            'ሳብዕ': {'enum': 7, 'romanised': 'Sabi'},
+            'ሳምን': {'enum': 8, 'romanised': 'Samin'},
+            'ዘመደ-ግዕዝ': {'enum': 9, 'romanised': 'Zemede-Geʽez'},
+            'ዘመደ-ካዕብ': {'enum': 10, 'romanised': 'Zemede-Kaʽeb'},
+            'ዘመደ-ሣልስ': {'enum': 11, 'romanised': 'Zemede-Salis'},
+            'ዘመደ-ራብዕ': {'enum': 12, 'romanised': 'Zemede-Rabi'},
+            'ዘመደ-ኃምስ': {'enum': 13, 'romanised': 'Zemede-Hamis'},
+            'ዘመደ-ባዕድ': {'enum': 14, 'romanised': 'Zemede-Baʽed'}
         }
     }
 
@@ -145,15 +145,21 @@ class EthiopicUCD(UCD):
         result = EthiopicUCD.cursor.execute(query).fetchall()
         return [t[0] for t in result]
 
-    def get_order(self, label = False, romanised = False):
-        if romanised:
-            return self.METADATA['orders'][self._order]
+    def get_order(self, format: str = 'default') -> str | int:
+        if format.lower() == 'romanised':
+            return self.METADATA['orders'][self._order]['romanised']
+        elif format.lower() == 'enum':
+            return self.METADATA['orders'][self._order]['enum']
         return self._order
 
     def get_order_members(self):
         query = f"SELECT ሆሄ FROM ethiopic WHERE ቤት = '{self._order}'"
         result = EthiopicUCD.cursor.execute(query).fetchall()
         return [t[0] for t in result]
+
+    def convert_order(self, order:str) -> str:
+        query = f'SELECT ሆሄ FROM ethiopic WHERE ቤተሰብ = "{self._family}" and ቤት = "{new_order}";'
+        return EthiopicUCD.cursor.execute(query).fetchone()[0]
 
 class EthiopicUCDString(UCDString):
     def __init__(self, chars):
@@ -170,7 +176,7 @@ class EthiopicUCDString(UCDString):
     def get_family_at_index(self, idx):
         pass
 
-    def get_order(self):
+    def get_order(self, idx=None):
         return [c.get_order() for c in self._chars]
 
     def get_order_at_index(self, idx):
@@ -185,10 +191,8 @@ class EthiopicUCDString(UCDString):
     def set_family(self, family):
         pass
 
-    def set_order(self, order):
-        # changes every syllable of the string to the order indicated
-        pass
+    def convert_order(self, order, idx: int|None = None):
+        if idx == None:
+            return [c.convert_order(order) for c in self._chars]
+        return [c.convert_order(order) if i == idx else c for i, c in enumerate(self._chars)]
 
-    def set_order_at_index(self, int):
-        # like setOrder but for a string
-        pass

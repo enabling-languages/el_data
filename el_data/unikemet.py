@@ -59,9 +59,6 @@ class Unikemet(UCD):
 
 
 
-
-
-
 class UnikemetString(UCDString):
     def __init__(self, chars):
         self._chars = [Unikemet(char) for char in chars]
