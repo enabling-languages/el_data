@@ -133,11 +133,11 @@ class EthiopicUCD(UCD):
         # return 0x1369 <= ord(ethNumber) <= 0x137C
         return ethNumber in self.NUMERALS
 
-    def get_family(self, label = False, romanised = False):
-        if label and romanised:
-            return self._family
-        elif label:
-            return self._family
+    def get_family(self, mode: str = 'default'):
+        if mode == 'label':
+            return self.METADATA['families'][self._family]['label']
+        elif mode == 'romanised':
+            return self.METADATA['families'][self._family]['romanised']
         return self._family
 
     def get_family_members(self):
@@ -145,10 +145,10 @@ class EthiopicUCD(UCD):
         result = EthiopicUCD.cursor.execute(query).fetchall()
         return [t[0] for t in result]
 
-    def get_order(self, format: str = 'default') -> str | int:
-        if format.lower() == 'romanised':
+    def get_order(self, mode: str = 'default') -> str | int:
+        if mode.lower() == 'romanised':
             return self.METADATA['orders'][self._order]['romanised']
-        elif format.lower() == 'enum':
+        elif mode.lower() == 'enum':
             return self.METADATA['orders'][self._order]['enum']
         return self._order
 
@@ -158,7 +158,7 @@ class EthiopicUCD(UCD):
         return [t[0] for t in result]
 
     def convert_order(self, order:str) -> str:
-        query = f'SELECT ሆሄ FROM ethiopic WHERE ቤተሰብ = "{self._family}" and ቤት = "{new_order}";'
+        query = f'SELECT ሆሄ FROM ethiopic WHERE ቤተሰብ = "{self._family}" and ቤት = "{order}";'
         return EthiopicUCD.cursor.execute(query).fetchone()[0]
 
 class EthiopicUCDString(UCDString):
