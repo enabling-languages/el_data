@@ -191,8 +191,11 @@ class EthiopicUCDString(UCDString):
     def set_family(self, family):
         pass
 
-    def convert_order(self, order, idx: int|None = None):
+    def convert_order(self, order, idx: int|None = None, as_string: bool = False):
         if idx == None:
-            return [c.convert_order(order) for c in self._chars]
-        return [c.convert_order(order) if i == idx else c for i, c in enumerate(self._chars)]
-
+            results = [c.convert_order(order) for c in self._chars]
+        else:
+            results = [c.convert_order(order) if i == idx else c.character() for i, c in enumerate(self._chars)]
+        if as_string:
+            return ''.join(results)
+        return results
