@@ -154,10 +154,10 @@ class EthiopicUCD(UCD):
         return _icu.UnicodeSet(pattern)
 
     def get_order(self, mode: str = 'default') -> str | int:
-        if mode.lower() in ['romanised', 'romanized']:
-            return self.METADATA['orders'][self._order]['romanised']
-        elif mode.lower() == 'enum':
+        if mode.lower() == 'enum':
             return self.METADATA['orders'][self._order]['enum']
+        elif mode.lower() in ['romanised', 'romanized']:
+            return self.METADATA['orders'][self._order]['romanised']
         return self._order
 
     def get_order_members(self):
