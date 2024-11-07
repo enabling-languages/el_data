@@ -183,6 +183,19 @@ class EthiopicUCDString(UCDString):
         self.data = [c.data for c in self._chars]
         self.entities = [c.entities for c in self._chars]
 
+    def __len__(self):
+        return len(self._chars)
+
+    def __getitem__(self, i):
+        if isinstance(i, slice):
+            start, stop, step = i.indices(len(self))
+            return EthiopicUCDString([
+                self._chars[index]
+                for index in range(start, stop, step)
+            ])
+        else:
+            return self._chars[i]
+
     def get_family(self, idx: int|None = None) -> list[str]:
         if idx == None:
             results = [c.get_family() for c in self._chars]
