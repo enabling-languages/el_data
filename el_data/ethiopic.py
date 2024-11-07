@@ -3,8 +3,9 @@ import sqlite3 as _sqlite3
 from functools import partialmethod as _partialmethod
 from rich.console import Console as _Console
 from rich.table import Table as _Table, box as _box
-from .data import UCD, UCDString, BINARY_PROPERTIES, BLOCKS
-from .cldr import CLDR
+# from .data import UCD, UCDString, BINARY_PROPERTIES, BLOCKS
+# from .cldr import CLDR
+from el_data import UCD, UCDString, BINARY_PROPERTIES, BLOCKS, CLDR
 import os.path as _path
 
 class EthiopicUCD(UCD):
@@ -189,12 +190,11 @@ class EthiopicUCDString(UCDString):
     def __getitem__(self, i):
         if isinstance(i, slice):
             start, stop, step = i.indices(len(self))
-            return EthiopicUCDString([
-                EthiopicUCD(self.characters()[index])
-                for index in range(start, stop, step)
-            ])
+            return EthiopicUCDString("".join([
+                self.data[index][0] for index in range(start, stop, step)
+            ]))
         else:
-            return EthiopicUCD(self.characters()[i])
+            return EthiopicUCD(self.data[i][0])
 
     def get_family(self, idx: int|None = None) -> list[str]:
         if idx == None:
@@ -222,3 +222,6 @@ class EthiopicUCDString(UCDString):
         if as_string:
             return ''.join(results)
         return results
+
+    def to_string(self):
+        return "".join(self.characters())
