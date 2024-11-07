@@ -96,8 +96,8 @@ class EthiopicUCD(UCD):
             EthiopicUCD.cursor = EthiopicUCD.conn.cursor()
          except Exception as error:
             print("Error: Connection not established {}".format(error))
-         else:
-            print("Connection established")
+         # else:
+         #    print("Connection established")
       self._char = char
       self._name = _icu.Char.charName(self._char)
       self._cp = f'{ord(self._char):04X}'
@@ -134,9 +134,9 @@ class EthiopicUCD(UCD):
         return ethNumber in self.NUMERALS
 
     def get_family(self, mode: str = 'default'):
-        if mode == 'label':
+        if mode.lower() == 'label':
             return self.METADATA['families'][self._family]['label']
-        elif mode == 'romanised':
+        elif mode.lower() in ['romanised', 'romanized']:
             return self.METADATA['families'][self._family]['romanised']
         return self._family
 
@@ -145,8 +145,16 @@ class EthiopicUCD(UCD):
         result = EthiopicUCD.cursor.execute(query).fetchall()
         return [t[0] for t in result]
 
+    def get_family_pattern(self):
+        uset = self.get_family_uset()
+        return uset.toPattern()
+
+    def get_family_uset(self):
+        pattern = rf'[{" ".join(self.get_family_members())}]'
+        return _icu.UnicodeSet(pattern)
+
     def get_order(self, mode: str = 'default') -> str | int:
-        if mode.lower() == 'romanised':
+        if mode.lower() in ['romanised', 'romanized']:
             return self.METADATA['orders'][self._order]['romanised']
         elif mode.lower() == 'enum':
             return self.METADATA['orders'][self._order]['enum']
@@ -156,6 +164,14 @@ class EthiopicUCD(UCD):
         query = f"SELECT ሆሄ FROM ethiopic WHERE ቤት = '{self._order}'"
         result = EthiopicUCD.cursor.execute(query).fetchall()
         return [t[0] for t in result]
+
+    def get_order_pattern(self):
+        uset = self.get_order_uset()
+        return uset.toPattern()
+
+    def get_order_uset(self):
+        pattern = rf'[{" ".join(self.get_order_members())}]'
+        return _icu.UnicodeSet(pattern)
 
     def convert_order(self, order:str) -> str:
         query = f'SELECT ሆሄ FROM ethiopic WHERE ቤተሰብ = "{self._family}" and ቤት = "{order}";'
@@ -167,29 +183,23 @@ class EthiopicUCDString(UCDString):
         self.data = [c.data for c in self._chars]
         self.entities = [c.entities for c in self._chars]
 
-    def get_family(self, as_string: bool = False):
-        results =  [c.get_family() for c in self._chars]
-        if as_string:
-            return "".join(results)
+    def get_family(self, idx: int|None = None) -> list[str]:
+        if idx == None:
+            results = [c.get_family() for c in self._chars]
+        else:
+            results = [c.get_family() for i, c in enumerate(self._chars) if i == idx ]
         return results
 
-    def get_family_at_index(self, idx):
-        pass
+    def get_order(self, idx: int|None = None) -> list[str]:
+        if idx == None:
+            return [c.get_order() for c in self._chars]
+        return [c.get_order() for i, c in enumerate(self._chars) if i == idx ]
 
-    def get_order(self, idx=None):
-        return [c.get_order() for c in self._chars]
-
-    def get_order_at_index(self, idx):
-        pass
-
-    def is_ethiopic_numeral(self, ethNumber):
+    def is_ethiopic_numeral(self, ethNumber: str) -> bool:
         if len(ethNumber) == 1:
             # return 0x1369 <= ord(ethNumber) <= 0x137C
             return ethNumber in EthiopicUCD.NUMERALS
         return set(ethNumber).issubset(EthiopicUCD.NUMERALS)
-
-    def set_family(self, family):
-        pass
 
     def convert_order(self, order, idx: int|None = None, as_string: bool = False):
         if idx == None:
