@@ -190,11 +190,11 @@ class EthiopicUCDString(UCDString):
         if isinstance(i, slice):
             start, stop, step = i.indices(len(self))
             return EthiopicUCDString([
-                self._chars[index]
+                EthiopicUCD(self.characters()[index])
                 for index in range(start, stop, step)
             ])
         else:
-            return self._chars[i]
+            return EthiopicUCD(self.characters()[i])
 
     def get_family(self, idx: int|None = None) -> list[str]:
         if idx == None:
