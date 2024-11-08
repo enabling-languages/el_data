@@ -196,11 +196,11 @@ class EthiopicUCDString(UCDString):
             # return EthiopicUCD(self.data[i][0])
             return EthiopicUCDString(self.data[i][0])
 
-    def get_family(self) -> list[str]:
-            return [c.get_family() for c in self._chars]
+    def get_family(self, mode: str = 'default') -> list[str]:
+            return [c.get_family(mode = mode) for c in self._chars]
 
-    def get_order(self) -> list[str]:
-        return [c.get_order() for c in self._chars]
+    def get_order(self, mode: str = 'default') -> list[str]:
+        return [c.get_order(mode = mode) for c in self._chars]
 
     def is_ethiopic_numeral(self, ethNumber: str) -> bool:
         if len(ethNumber) == 1:
