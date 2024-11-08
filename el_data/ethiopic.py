@@ -3,9 +3,8 @@ import sqlite3 as _sqlite3
 from functools import partialmethod as _partialmethod
 from rich.console import Console as _Console
 from rich.table import Table as _Table, box as _box
-# from .data import UCD, UCDString, BINARY_PROPERTIES, BLOCKS
+from .data import UCD, UCDString, BINARY_PROPERTIES, BLOCKS
 # from .cldr import CLDR
-from el_data import UCD, UCDString, BINARY_PROPERTIES, BLOCKS, CLDR
 import os.path as _path
 
 class EthiopicUCD(UCD):
@@ -194,19 +193,14 @@ class EthiopicUCDString(UCDString):
                 self.data[index][0] for index in range(start, stop, step)
             ]))
         else:
-            return EthiopicUCD(self.data[i][0])
+            # return EthiopicUCD(self.data[i][0])
+            return EthiopicUCDString(self.data[i][0])
 
-    def get_family(self, idx: int|None = None) -> list[str]:
-        if idx == None:
-            results = [c.get_family() for c in self._chars]
-        else:
-            results = [c.get_family() for i, c in enumerate(self._chars) if i == idx ]
-        return results
+    def get_family(self) -> list[str]:
+            return [c.get_family() for c in self._chars]
 
-    def get_order(self, idx: int|None = None) -> list[str]:
-        if idx == None:
-            return [c.get_order() for c in self._chars]
-        return [c.get_order() for i, c in enumerate(self._chars) if i == idx ]
+    def get_order(self) -> list[str]:
+        return [c.get_order() for c in self._chars]
 
     def is_ethiopic_numeral(self, ethNumber: str) -> bool:
         if len(ethNumber) == 1:
