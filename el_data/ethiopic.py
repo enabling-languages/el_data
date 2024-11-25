@@ -246,7 +246,7 @@ class EthiopicUCDString(UCDString):
         Returns:
             list[str] | str: A list or syllbales or string.
         """
-        if idx == None:
+        if idx is None:
             results = [c.convert_order(order) for c in self._chars]
         else:
             results = [c.convert_order(order) if i == idx else c.character() for i, c in enumerate(self._chars)]
