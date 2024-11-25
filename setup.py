@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='el_data',
-    version='0.3.4',
+    version='0.3.5',
     description='Helper functions for accessing internationalisation data',
     url='https://github.com/enabling-languages/el_data',
     author='Andrew Cunningham',
@@ -14,7 +14,8 @@ setup(
         'lxml',
         'pyicu',
         'requests',
-        'rich'
+        'rich',
+        'tabulate'
     ],
     include_package_data=True,
     classifiers=[

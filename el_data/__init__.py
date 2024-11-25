@@ -4,7 +4,7 @@ el_data
 Helper functions for accessing internationalisation related data.
 """
 
-__version__ = "0.3.4"
+__version__ = "0.3.5"
 __author__ = 'Andrew Cunningham'
 __credits__ = 'Enabling Languages'
 
