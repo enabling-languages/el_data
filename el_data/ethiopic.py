@@ -6,6 +6,7 @@ from rich.table import Table as _Table, box as _box
 from .data import UCD, UCDString, BINARY_PROPERTIES, BLOCKS
 # from .cldr import CLDR
 import os.path as _path
+from typing import Self as _Self
 
 class EthiopicUCD(UCD):
 
@@ -123,70 +124,70 @@ class EthiopicUCD(UCD):
             self._hex_ncr(exclude_ascii=False, as_char=False)
         )
 
-    def _order_family(self):
+    def _order_family(self: _Self):
         if self._char in self.SYLLABLES:
             query = f"SELECT ቤተሰብ, ቤት FROM ethiopic WHERE ሆሄ = '{self._char}'"
             return EthiopicUCD.cursor.execute(query).fetchall()[0]
         return (None, None)
 
-    def is_ethiopic_numeral(self, ethNumber):
+    def is_ethiopic_numeral(self: _Self, ethNumber: str) -> bool:
         # return 0x1369 <= ord(ethNumber) <= 0x137C
         return ethNumber in self.NUMERALS
 
-    def get_family(self, mode: str = 'default'):
+    def get_family(self: _Self, mode: str = 'default') -> str:
         if mode.lower() == 'label':
             return self.METADATA['families'][self._family]['label']
         elif mode.lower() in ['romanised', 'romanized']:
             return self.METADATA['families'][self._family]['romanised']
         return self._family
 
-    def get_family_members(self):
+    def get_family_members(self: _Self) -> list[str]:
         query = f"SELECT ሆሄ FROM ethiopic WHERE ቤተሰብ = '{self._family}'"
         result = EthiopicUCD.cursor.execute(query).fetchall()
         return [t[0] for t in result]
 
-    def get_family_pattern(self):
+    def get_family_pattern(self: _Self) -> str:
         uset = self.get_family_uset()
         return uset.toPattern()
 
-    def get_family_uset(self):
+    def get_family_uset(self: _Self) -> _icu.UnicodeSet:
         pattern = rf'[{" ".join(self.get_family_members())}]'
         return _icu.UnicodeSet(pattern)
 
-    def get_order(self, mode: str = 'default') -> str | int:
+    def get_order(self: _Self, mode: str = 'default') -> str | int:
         if mode.lower() == 'enum':
             return self.METADATA['orders'][self._order]['enum']
         elif mode.lower() in ['romanised', 'romanized']:
             return self.METADATA['orders'][self._order]['romanised']
         return self._order
 
-    def get_order_members(self):
+    def get_order_members(self: _Self) -> list[str]:
         query = f"SELECT ሆሄ FROM ethiopic WHERE ቤት = '{self._order}'"
         result = EthiopicUCD.cursor.execute(query).fetchall()
         return [t[0] for t in result]
 
-    def get_order_pattern(self):
+    def get_order_pattern(self: _Self) -> str:
         uset = self.get_order_uset()
         return uset.toPattern()
 
-    def get_order_uset(self):
+    def get_order_uset(self: _Self) -> _icu.UnicodeSet:
         pattern = rf'[{" ".join(self.get_order_members())}]'
         return _icu.UnicodeSet(pattern)
 
-    def convert_order(self, order:str) -> str:
+    def convert_order(self: _Self, order:str) -> str:
         query = f'SELECT ሆሄ FROM ethiopic WHERE ቤተሰብ = "{self._family}" and ቤት = "{order}";'
         return EthiopicUCD.cursor.execute(query).fetchone()[0]
 
 class EthiopicUCDString(UCDString):
-    def __init__(self, chars):
+    def __init__(self: _Self, chars: str):
         self._chars = [EthiopicUCD(char) for char in chars]
         self.data = [c.data for c in self._chars]
         self.entities = [c.entities for c in self._chars]
 
-    def __len__(self):
+    def __len__(self: _Self) -> int:
         return len(self._chars)
 
-    def __getitem__(self, i):
+    def __getitem__(self: _Self, i) -> _Self:
         if isinstance(i, slice):
             start, stop, step = i.indices(len(self))
             return EthiopicUCDString("".join([
@@ -196,19 +197,55 @@ class EthiopicUCDString(UCDString):
             # return EthiopicUCD(self.data[i][0])
             return EthiopicUCDString(self.data[i][0])
 
-    def get_family(self, mode: str = 'default') -> list[str]:
-            return [c.get_family(mode = mode) for c in self._chars]
+    def get_family(self: _Self, mode: str = 'default') -> list[str]:
+        """_summary_
 
-    def get_order(self, mode: str = 'default') -> list[str]:
+        Args:
+            self (_Self): _description_
+            mode (str, optional): _description_. Defaults to 'default'.
+
+        Returns:
+            list[str]: _description_
+        """
+        return [c.get_family(mode = mode) for c in self._chars]
+
+    def get_order(self: _Self, mode: str = 'default') -> list[str]:
+        """_summary_
+
+        Args:
+            self (_Self): _description_
+            mode (str, optional): _description_. Defaults to 'default'.
+
+        Returns:
+            list[str]: _description_
+        """
         return [c.get_order(mode = mode) for c in self._chars]
 
-    def is_ethiopic_numeral(self, ethNumber: str) -> bool:
+    def is_ethiopic_numeral(self: _Self, ethNumber: str) -> bool:
+        """_summary_
+
+        Args:
+            ethNumber (str): _description_
+
+        Returns:
+            bool: _description_
+        """
         if len(ethNumber) == 1:
             # return 0x1369 <= ord(ethNumber) <= 0x137C
             return ethNumber in EthiopicUCD.NUMERALS
         return set(ethNumber).issubset(EthiopicUCD.NUMERALS)
 
-    def convert_order(self, order, idx: int|None = None, as_string: bool = False):
+    def convert_order(self: _Self, order, idx: int|None = None, as_string: bool = False) -> list[str] | str:
+        """Convert each syllable, or syllable at index, to the corresponding syllable of the specified order.
+
+        Args:
+            order (_type_): Order that syllable(s) will be converted to.
+            idx (int | None, optional): Index of syllable to be converted. If not specified, all characters are converted. Defaults to None.  Alternatively use slices.
+            as_string (bool, optional): Retrun characters as a string if True, else return as a list of characters. Defaults to False.
+
+        Returns:
+            list[str] | str: A list or syllbales or string.
+        """
         if idx == None:
             results = [c.convert_order(order) for c in self._chars]
         else:
@@ -217,5 +254,10 @@ class EthiopicUCDString(UCDString):
             return ''.join(results)
         return results
 
-    def to_string(self):
+    def to_string(self: _Self) -> str:
+        """Convert EthiopicUCD String object to a string.
+
+        Returns:
+            str: _description_
+        """
         return "".join(self.characters())

@@ -4,6 +4,7 @@ import html as _html
 from rich.console import Console as _Console
 from rich.table import Table as _Table, box as _box
 from hexdump import hexdump as _hexdump
+from typing import Self as _Self
 
 #
 # Refer to
@@ -536,6 +537,18 @@ class UCDString():
         class_name = type(self).__name__
         return f"{class_name}(chars={self.characters()})"
 
+    def __len__(self: _Self) -> int:
+        return len(self._chars)
+
+    def __getitem__(self: _Self, i) -> _Self:
+        if isinstance(i, slice):
+            start, stop, step = i.indices(len(self))
+            return UCDString("".join([
+                self.data[index][0] for index in range(start, stop, step)
+            ]))
+        else:
+            return UCDString(self.data[i][0])
+
     def ages(self):
         return [c.age() for c in self._chars]
 
@@ -559,6 +572,8 @@ class UCDString():
 
     def properties(self, property, short_name = False):
         return [c._get_property(property, short_name) for c in self._chars]
+
+
 
 def unicode_data(text):
     """Display Unicode data for each character in string.
@@ -682,7 +697,7 @@ def display_entities(text: str) -> None:
         header_style="light_slate_blue",
         title=f"Numeric and entity values for Character",
         box=_box.SQUARE,
-        caption=f"Character: {char.character()}")
+        caption=f"Character: {data.characters()}")
     table.add_column("Character")
     table.add_column("Hexadecimal")
     table.add_column("Decimal")
