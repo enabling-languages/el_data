@@ -1,10 +1,15 @@
-import icu as _icu
+
 from functools import partialmethod as _partialmethod
 import html as _html
+try:
+  from typing import Self as _Self
+except ImportError:
+  from typing_extensions import Self as _Self
+
+from hexdump import hexdump as _hexdump
+import icu as _icu
 from rich.console import Console as _Console
 from rich.table import Table as _Table, box as _box
-from hexdump import hexdump as _hexdump
-from typing import Self as _Self
 from tabulate import tabulate as _tabulate
 
 #
@@ -591,7 +596,7 @@ def unicode_data(text):
         show_header=True,
         header_style="light_slate_blue",
         title="Character properties",
-        box=_box.SQUARE, 
+        box=_box.SQUARE,
         caption=f"String: {text}")
     table.add_column("char")
     table.add_column("cp")
@@ -724,7 +729,7 @@ def display_entities(text: str) -> None:
 entities = display_entities
 
 def uset_to_list(notation:str) -> list[str]:
-    uset = _icu.UnicodeSet(notation) 
+    uset = _icu.UnicodeSet(notation)
     return list(uset)
 
 def uset_to_pattern(notation: str) -> str:

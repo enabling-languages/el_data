@@ -6,7 +6,10 @@ from rich.table import Table as _Table, box as _box
 from .data import UCD, UCDString, BINARY_PROPERTIES, BLOCKS
 # from .cldr import CLDR
 import os.path as _path
-from typing import Self as _Self
+try:
+  from typing import Self as _Self
+except ImportError:
+  from typing_extensions import Self as _Self
 
 class EthiopicUCD(UCD):
 
