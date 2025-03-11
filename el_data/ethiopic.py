@@ -18,7 +18,11 @@ class EthiopicUCD(UCD):
     CHARACTERS = _icu.UnicodeSet(r'[\p{Ethiopic}]')
     SYLLABLES = _icu.UnicodeSet(r'[[\p{Ethiopic}]&[\p{L}]]')
     PUNCTUATION = _icu.UnicodeSet(r'[[\p{Ethiopic}]&[\p{P}]]')
-    NUMERALS = _icu.UnicodeSet(r'[[\p{Ethiopic}]&[\p{N}]]')
+    PUNCTUATION_COMMON = _icu.UnicodeSet(r"[\u0021\u0023-\u0026\u0028\u0029\u002B-\u002F\u003C-\u0040\u005B-\u005D\u005F\u007B\u007D\u00A1\u00AB\u00B1\u00BB\u00D7\u00F7\u2018\u2019\u201C\u201D\u2026\u2039\u203A\u20AC]")
+    PUNCTUATION_ALL = PUNCTUATION.addAll(PUNCTUATION_COMMON)
+    WORD_SEPARATORS = _icu.UnicodeSet(r'[[\p{Zs}}][፡።]]')
+    NUMBERS = _icu.UnicodeSet(r'[[\p{Ethiopic}]&[\p{N}]]')
+    NUMBERS_ALL = _icu.UnicodeSet(r'[[[\p{Ethiopic}]&[\p{N}]][0-9]]')
     MARKS = _icu.UnicodeSet(r'[[\p{Ethiopic}]&[\p{Mn}]]')
     ZAIMA_QIRTS = _icu.UnicodeSet(r'[[\p{Ethiopic}]&[\p{So}]]')
 
@@ -264,3 +268,142 @@ class EthiopicUCDString(UCDString):
             str: _description_
         """
         return "".join(self.characters())
+
+# def get_ethiopic_order(char: str) -> str:
+#     if len(char) != 1:
+#         raise ValueError("Input must be a single character")
+#     return EthiopicUCD(char).get_order_members()
+
+def ethiopic_order(order: int|str) -> list[str]:
+    """Create a list of all characters in a given Ethiopic order.
+
+    Used to get a list of characters in a given Ethiopic order. Useful for
+    creating named lists for regular expressions patterns with the `regex` module.
+
+    Examples:
+        ethiopic_order(1)
+        ethiopic_order('1')
+        ethiopic_order('1,7')
+        ethiopic_order('1-3')
+        ethiopic_order('1-3,7')
+
+    Args:
+        order (int|str): Ethiopic order number or range of orders.
+
+    Raises:
+        ValueError: Input must be an integer between 1 and 14
+
+    Returns:
+        list[str]: List of characters in the specified orders.
+    """
+    if isinstance(order, int) and not 0 < order < 15:
+        raise ValueError('Input must be an integer between 1 and 14')
+    order_examples = {
+        1: 'መ', 2 : 'ሙ', 3 : 'ሚ', 4 : 'ማ', 5 : 'ሜ',
+        6 : 'ም', 7 : 'ሞ', 8 : 'ⶁ', 9 : 'ᎀ', 10 : 'ᎁ', 
+        11 : 'ሟ', 12 : 'ᎂ', 13 : 'ᎃ', 14 : 'ፙ'
+    }
+    if isinstance(order, int):
+        return EthiopicUCD(order_examples[order]).get_order_members()
+    else:
+        orders = expand_range(order)
+        pattern = []
+        for o in orders:
+            pattern = pattern + EthiopicUCD(order_examples[o]).get_order_members()
+        return pattern
+
+def ethiopic_family(family: str) -> list[str]:
+    """Create a list of all characters in a given Ethiopic family.
+
+    Used to get a list of characters in a given Ethiopic family. Useful for
+    creating named lists for regular expressions patterns with the `regex` module.
+
+    Examples:
+        ethiopic_family('ለ')
+        ethiopic_family('ለ,መ')
+        ethiopic_family('ለ-መ')
+        ethiopic_family('ጸ,ለ-መ')
+
+    Args:
+        family (str): Ethiopic family.
+
+    Returns:
+        list[str]: List of characters in the specified family.
+    """    
+    # if len(family) != 1:
+    #     raise ValueError("Input must be a single character")
+    pattern = []
+    if len(family) == 1:
+        pattern = EthiopicUCD(family).get_family_members()
+    else:
+        families = expand_range(family)
+        for f in families:
+            pattern = pattern + EthiopicUCD(f).get_family_members()
+    return pattern
+
+# def expand_range(char_range: str) -> list[str]:
+#     """Expand Ethiopic order and family range into a list of orders or families.
+#
+#     Used to expand Ethiopic order and family ranges into a list of characters. Useful for
+#
+#     e.g. 
+#         expand_range('1,3-6') -> ['1', '3', '4', '5', '6']
+#         expand_range('ለ-መ') -> ['ለ', 'ሐ', 'መ']
+#         expand_range('ጸለ-መ') -> ['ለ', 'ሐ', 'መ', 'ጸ']
+#
+#     Args:
+#         char_range (str): Ethiopic character range.
+#
+#     Returns:
+#         list[str]: List of characters in the specified range.
+#     """
+#     char_range = char_range.replace(',', '')
+#     chars = _icu.UnicodeSet(rf'[{char_range}]') 
+#     if all([x.isdigit() for x in chars]):
+#         return list(chars)
+#     family_ids = EthiopicUCD.METADATA['families'].keys()
+#     return [x for x in list(chars) if x in family_ids]
+
+def expand_range(char_range: str) -> list[str, int]:
+    """Expand Ethiopic order and family range into a list of orders or families.
+
+    Used to expand Ethiopic order and family ranges into a list of characters. Useful for
+
+    e.g. 
+        expand_range('1,3-6') -> ['1', '3', '4', '5', '6']
+        expand_range('ለ-መ') -> ['ለ', 'ሐ', 'መ']
+        expand_range('ጸ,ለ-መ') -> ['ለ', 'ሐ', 'መ', 'ጸ']
+
+    Args:
+        char_range (str): Ethiopic order or family range.
+
+    Returns:
+        list[str, int]: List of characters in the specified range. Either as a list of order numbers or family names.
+    """
+    family_ids = EthiopicUCD.METADATA['families'].keys()
+    if "," in char_range:
+        char_range = char_range.split(',')
+        char_range = [x.strip() for x in char_range]
+    else:
+        char_range = [char_range]
+    results = []
+    for item in char_range:
+        if "-" in item:
+            if any([x.isdigit() for x in item]):
+                start, end = item.split('-')
+                sub_range = list(range(int(start), int(end)+1))
+                results = results + sub_range
+            else:
+               sub_range = list(_icu.UnicodeSet(rf'[{item}]'))
+               results = results + sub_range
+        else:
+            if item.isdigit():
+                results.append(int(item)) 
+            else: 
+                if len(item) == 1:
+                    results.append(item)
+                else:
+                    results = results + list(_icu.UnicodeSet(rf'[{item}]'))
+    if not any([isinstance(x, int) for x in results]):
+        results = [x for x in results if x in family_ids]
+    return results
