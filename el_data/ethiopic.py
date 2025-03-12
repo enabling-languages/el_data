@@ -11,6 +11,195 @@ try:
 except ImportError:
   from typing_extensions import Self as _Self
 
+homophonic_syllable_equivalences = {
+    'am': {
+        "ሀ": 'ሀ,ሃ,ሐ,ሓ,ኀ,ኃ,ኻ',
+        "ሐ": 'ሀ,ሃ,ሐ,ሓ,ኀ,ኃ,ኻ',
+        "ሃ": 'ሀ,ሃ,ሐ,ሓ,ኀ,ኃ,ኻ',
+        "ሓ": 'ሀ,ሃ,ሐ,ሓ,ኀ,ኃ,ኻ',
+        "ኀ": 'ሀ,ሃ,ሐ,ሓ,ኀ,ኃ,ኻ',
+        "ኃ": 'ሀ,ሃ,ሐ,ሓ,ኀ,ኃ,ኻ',
+        "ኻ": 'ሀ,ሃ,ሐ,ሓ,ኀ,ኃ,ኻ',
+        "ሁ": 'ሁ,ሑ,ኁ,ኹ',
+        "ሑ": 'ሁ,ሑ,ኁ,ኹ',
+        "ኁ": 'ሁ,ሑ,ኁ,ኹ',
+        "ኹ": 'ሁ,ሑ,ኁ,ኹ',
+        "ሂ": "ሂ,ሒ,ኂ,ኺ",
+        "ሒ": "ሂ,ሒ,ኂ,ኺ",
+        "ኂ": "ሂ,ሒ,ኂ,ኺ",
+        "ኺ": "ሂ,ሒ,ኂ,ኺ",
+        "ሄ": "ሄ,ሔ,ኄ,ኼ",
+        "ሔ": "ሄ,ሔ,ኄ,ኼ",
+        "ኄ": "ሄ,ሔ,ኄ,ኼ",
+        "ኼ": "ሄ,ሔ,ኄ,ኼ",
+        "ህ": "ህ,ሕ,ኅ,ኽ",
+        "ሕ": "ህ,ሕ,ኅ,ኽ",
+        "ኅ": "ህ,ሕ,ኅ,ኽ",
+        "ኽ": "ህ,ሕ,ኅ,ኽ",
+        "ሆ": "ሆ,ሖ,ኆ,ኈ,ኾ,ዀ",
+        "ሖ": "ሆ,ሖ,ኆ,ኈ,ኾ,ዀ",
+        "ኆ": "ሆ,ሖ,ኆ,ኈ,ኾ,ዀ",
+        "ኈ": "ሆ,ሖ,ኆ,ኈ,ኾ,ዀ",
+        "ኾ": "ሆ,ሖ,ኆ,ኈ,ኾ,ዀ",
+        "ዀ": "ሆ,ሖ,ኆ,ኈ,ኾ,ዀ",
+        "ሗ": "ሗ,ኋ,ዃ",
+        "ኋ": "ሗ,ኋ,ዃ",
+        "ዃ": "ሗ,ኋ,ዃ",
+        "ሰ": "ሰ,ሠ",
+        "ሠ": "ሰ,ሠ",
+        "ሱ": "ሱ,ሡ",
+        "ሡ": "ሱ,ሡ",
+        "ሲ": "ሲ,ሢ",
+        "ሢ": "ሲ,ሢ",
+        "ሳ": "ሳ,ሣ",
+        "ሣ": "ሳ,ሣ",
+        "ሴ": "ሴ,ሤ",
+        "ሤ": "ሴ,ሤ",
+        "ስ": "ስ,ሥ",
+        "ሥ": "ስ,ሥ",
+        "ሶ": "ሶ,ሦ",
+        "ሦ": "ሶ,ሦ",
+        "ሷ": "ሷ,ሧ",
+        "ሧ": "ሷ,ሧ",
+        "ቁ": "ቁ,ቍ",
+        "ቍ": "ቁ,ቍ",
+        "ቆ": "ቆ,ቈ",
+        "ቈ": "ቆ,ቈ",
+        "አ": "አ,ኣ,ዐ,ዓ",
+        "ኣ": "አ,ኣ,ዐ,ዓ",
+        "ዐ": "አ,ኣ,ዐ,ዓ",
+        "ዓ": "አ,ኣ,ዐ,ዓ",
+        "ኡ": "ኡ,ዑ",
+        "ዑ": "ኡ,ዑ",
+        "ኢ": "ኢ,ዒ",
+        "ዒ": "ኢ,ዒ",
+        "ኤ": "ኤ,ዔ",
+        "ዔ": "ኤ,ዔ",
+        "እ": "እ,ዕ",
+        "ዕ": "እ,ዕ",
+        "ኦ": "ኦ,ዖ",
+        "ዖ": "ኦ,ዖ",
+        "ኮ": "ኮ,ኰ",
+        "ኰ": "ኮ,ኰ",
+        "ጎ": "ጎ,ጐ",
+        "ጐ": "ጎ,ጐ",
+        "ጸ": "ጸ,ፀ",
+        "ፀ": "ጸ,ፀ",
+        "ጹ": "ጹ,ፁ",
+        "ፁ": "ጹ,ፁ",
+        "ጺ": "ጺ,ፂ",
+        "ፂ": "ጺ,ፂ",
+        "ጻ": "ጻ,ፃ",
+        "ፃ": "ጻ,ፃ",
+        "ጼ": "ጼ,ፄ",
+        "ፄ": "ጼ,ፄ",
+        "ጽ": "ጽ,ፅ",
+        "ፅ": "ጽ,ፅ",
+        "ጾ": "ጾ,ፆ",
+        "ፆ": "ጾ,ፆ"
+        },
+    "ti": {
+        "ሀ": "ሀ,ሃ,ኀ,ኃ",
+        "ሃ": "ሀ,ሃ,ኀ,ኃ",
+        "ኀ": "ሀ,ሃ,ኀ,ኃ",
+        "ኃ": "ሀ,ሃ,ኀ,ኃ",
+        "ሁ": "ሁ,ኁ",
+        "ኁ": "ሁ,ኁ",
+        "ሂ": "ሂ,ኂ",
+        "ኂ": "ሂ,ኂ",
+        "ሄ": "ሄ,ኄ",
+        "ኄ": "ሄ,ኄ",
+        "ህ": "ህ,ኅ",
+        "ኅ": "ህ,ኅ",
+        "ሆ": "ሆ,ኆ,ኈ",
+        "ኆ": "ሆ,ኆ,ኈ",
+        "ኈ": "ሆ,ኆ,ኈ",
+        "ሐ": "ሐ,ሓ",
+        "ሓ": "ሐ,ሓ",
+        "ሰ": "ሰ,ሠ",
+        "ሠ": "ሰ,ሠ",
+        "ሱ": "ሱ,ሡ",
+        "ሡ": "ሱ,ሡ",
+        "ሲ": "ሲ,ሢ",
+        "ሢ": "ሲ,ሢ",
+        "ሳ": "ሳ,ሣ",
+        "ሣ": "ሳ,ሣ",
+        "ሴ": "ሴ,ሤ",
+        "ሤ": "ሴ,ሤ",
+        "ስ": "ስ,ሥ",
+        "ሥ": "ስ,ሥ",
+        "ሶ": "ሶ,ሦ",
+        "ሦ": "ሶ,ሦ",
+        "ሷ": "ሷ,ሧ",
+        "ሧ": "ሷ,ሧ",
+        "ቁ": "ቁ,ቍ",
+        "ቍ": "ቁ,ቍ",
+        "ቆ": "ቆ,ቈ",
+        "ቈ": "ቆ,ቈ",
+        "አ": "አ,ኣ",
+        "ኣ": "አ,ኣ",
+        "ኮ": "ኮ,ኰ",
+        "ኰ": "ኮ,ኰ",
+        "ዐ": "ዐ,ዓ",
+        "ዓ": "ዐ,ዓ",
+        "ጎ": "ጎ,ጐ",
+        "ጐ": "ጎ,ጐ",
+        "ጸ": "ጸ,ፀ",
+        "ፀ": "ጸ,ፀ",
+        "ጹ": "ጹ,ፁ",
+        "ፁ": "ጹ,ፁ",
+        "ጺ": "ጺ,ፂ",
+        "ፂ": "ጺ,ፂ",
+        "ጻ": "ጻ,ፃ",
+        "ፃ": "ጻ,ፃ",
+        "ጼ": "ጼ,ፄ",
+        "ፄ": "ጼ,ፄ",
+        "ጽ": "ጽ,ፅ",
+        "ፅ": "ጽ,ፅ",
+        "ጾ": "ጾ,ፆ",
+        "ፆ": "ጾ,ፆ"
+    },
+    "gez": {
+        "ሀ": "ሀ,ሃ",
+        "ሃ": "ሀ,ሃ",
+        "ሐ": "ሐ,ሓ",
+        "ሓ": "ሐ,ሓ",
+        "ኀ": "ኀ,ኃ",
+        "ኃ": "ኀ,ኃ",
+        "አ": "አ,ኣ",
+        "ኣ": "አ,ኣ",
+        "ኮ": "ኮ,ኰ",
+        "ኰ": "ኮ,ኰ",
+        "ዐ": "ዐ,ዓ",
+        "ዓ": "ዐ,ዓ",
+        "ጎ": "ጎ,ጐ",
+        "ጐ": "ጎ,ጐ"
+    }
+}
+
+homophonic_family_equivalences = {
+    "am": {
+        "ሀ": 'ሀ-ሆ,ሐ-ሗ,ኀ-ኆ,ኈ-ኍ,ኸ-ኾ,ዀ-ዅ',
+        "ሐ": 'ሀ-ሆ,ሐ-ሗ,ኀ-ኆ,ኈ-ኍ,ኸ-ኾ,ዀ-ዅ',
+        "ኀ": 'ሀ-ሆ,ሐ-ሗ,ኀ-ኆ,ኈ-ኍ,ኸ-ኾ,ዀ-ዅ',
+        "ኸ": 'ሀ-ሆ,ሐ-ሗ,ኀ-ኆ,ኈ-ኍ,ኸ-ኾ,ዀ-ዅ',
+        "ሰ": "ሰ-ሷ,ሠ-ሧ",
+        "ሠ": "ሰ-ሷ,ሠ-ሧ",
+        "አ": "አ-ኧ,ዐ-ዖ",
+        "ዐ": "አ-ኧ,ዐ-ዖ",
+        "ጸ": "ጸ-ጿ,ፀ-ፆ",
+        "ፀ": "ጸ-ጿ,ፀ-ፆ"
+    },
+    "ti": {
+        "ሀ": "ሀ-ሆ,ኀ-ኆ,ኈ-ኍ",
+        "ኀ": "ሀ-ሆ,ኀ-ኆ,ኈ-ኍ",
+        "ሰ": "ሰ-ሷ,ሠ-ሧ",
+        "ሠ": "ሰ-ሷ,ሠ-ሧ",
+        "ጸ": "ጸ-ጿ,ፀ-ፆ",
+        "ፀ": "ጸ-ጿ,ፀ-ፆ"
+    }
+}
+
 class EthiopicUCD(UCD):
 
     conn = None
@@ -341,6 +530,27 @@ def ethiopic_family(family: str) -> list[str]:
             pattern = pattern + EthiopicUCD(f).get_family_members()
     return pattern
 
+def filter_orders(families: str, orders: int|str) -> list[str]:
+    """Create a list of all characters in given Ethiopic families and orders. 
+   
+    Used to get a list of characters in a given Ethiopic family and order. Useful
+    for creating named lists for regular expressions patterns with the `regex` module.
+    I.e. syllables of specified orders restricted to specified families).
+
+    Examples:
+        filter_orders('መ-ቀ', '4,6') ➡︎ ['ር', 'ሻ', 'ሣ', 'ማ', 'ራ', 'ቅ', 'ሥ', 'ስ', 'ቃ', 'ም', 'ሳ', 'ሽ']
+
+    Args:
+        family (str): Ethiopic family.
+        order (int|str): Ethiopic order number or range of orders.
+
+    Returns:
+        list[str]: List of characters in the specified family and order.
+    """
+    family = ethiopic_family(families)
+    order = ethiopic_order(orders)
+    return list(set(family) & set(order))
+
 # def expand_range(char_range: str) -> list[str]:
 #     """Expand Ethiopic order and family range into a list of orders or families.
 #
@@ -407,3 +617,28 @@ def expand_range(char_range: str) -> list[str, int]:
     if not any([isinstance(x, int) for x in results]):
         results = [x for x in results if x in family_ids]
     return results
+
+def homophonic_equivalences(char: str, family: bool = False, language: str = 'am') -> list[str]:
+    # Returns a list of language specific homophonic equivalences for the given character or family.
+    if family and language not in ['am', 'ti']:
+        raise ValueError('Language must be "am" or "ti"')
+    if not family and language not in ['am', 'gez', 'ti']:
+        raise ValueError('Language must be "am", "gez" or "ti"')
+    homophones = []
+    if family:
+        homophones = expand_range(homophonic_family_equivalences.get(language).get(char, []))
+    else:
+        homophones = expand_range(homophonic_syllable_equivalences.get(language, {}).get(char, []))
+    return homophones
+
+def homophonic_normalisation(text: str, language: str = 'am') -> str:
+    if language not in ['am', 'gez', 'ti']:
+        raise ValueError('Language must be "am", "gez" or "ti"')
+    chars = [*text]
+    chars = [homophonic_syllable_equivalences.get(language).get(char, char)[0] for char in chars]
+    return ''.join(chars)
+
+def homophonic_compare(text1: str, text2: str, language: str = 'am') -> bool:
+    if language not in ['am', 'gez', 'ti']:
+        raise ValueError('Language must be "am", "gez" or "ti"')
+    return homophonic_normalisation(text1, language) == homophonic_normalisation(text2, language)
