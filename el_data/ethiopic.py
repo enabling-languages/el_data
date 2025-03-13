@@ -574,7 +574,7 @@ def filter_orders(families: str, orders: int|str) -> list[str]:
 #     family_ids = EthiopicUCD.METADATA['families'].keys()
 #     return [x for x in list(chars) if x in family_ids]
 
-def expand_range(char_range: str) -> list[str, int]:
+def expand_range(char_range: str, filtered: bool = True) -> list[str, int]:
     """Expand Ethiopic order and family range into a list of orders or families.
 
     Used to expand Ethiopic order and family ranges into a list of characters. Useful for
@@ -586,6 +586,7 @@ def expand_range(char_range: str) -> list[str, int]:
 
     Args:
         char_range (str): Ethiopic order or family range.
+        filtered (bool): If True, only return characters that are are family names. Default
 
     Returns:
         list[str, int]: List of characters in the specified range. Either as a list of order numbers or family names.
@@ -615,7 +616,7 @@ def expand_range(char_range: str) -> list[str, int]:
                 else:
                     results = results + list(_icu.UnicodeSet(rf'[{item}]'))
     if not any([isinstance(x, int) for x in results]):
-        results = [x for x in results if x in family_ids]
+        results = [x for x in results if x in family_ids] if filtered else results
     return results
 
 def homophonic_equivalences(char: str, family: bool = False, language: str = 'am') -> list[str]:
@@ -626,9 +627,9 @@ def homophonic_equivalences(char: str, family: bool = False, language: str = 'am
         raise ValueError('Language must be "am", "gez" or "ti"')
     homophones = []
     if family:
-        homophones = expand_range(homophonic_family_equivalences.get(language).get(char, []))
+        homophones = expand_range(homophonic_family_equivalences.get(language).get(char, []), filtered=False)
     else:
-        homophones = expand_range(homophonic_syllable_equivalences.get(language, {}).get(char, []))
+        homophones = expand_range(homophonic_syllable_equivalences.get(language).get(char, []), filtered=False)
     return homophones
 
 def homophonic_normalisation(text: str, language: str = 'am') -> str:
@@ -637,6 +638,8 @@ def homophonic_normalisation(text: str, language: str = 'am') -> str:
     chars = [*text]
     chars = [homophonic_syllable_equivalences.get(language).get(char, char)[0] for char in chars]
     return ''.join(chars)
+
+homophonic_normalization = homophonic_normalisation
 
 def homophonic_compare(text1: str, text2: str, language: str = 'am') -> bool:
     if language not in ['am', 'gez', 'ti']:
