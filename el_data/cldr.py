@@ -21,12 +21,48 @@ def get_exemplars(locale_id: str, use_sldr: bool = False) -> dict[str, str]:
         return exemplar_data
     return None
 
-class CLDR():
-    def __init__(self, locale_id:str, use_sldr: bool = False):
+
+class Exemplars():
+
+    def __init__(self, locale_id:str, ex_type: str = 'main', use_icu: bool = True):
         self._locale_id = locale_id.replace('-', '_')
-        self._use_sldr = use_sldr
-        self._ldml = self._main_ldml()
-        self._ld = _icu.LocaleData(self._locale_id)
+        self._ex_type = ex_type
+        self._use_icu = use_icu
+        self._exemplars = self._get_exemplars()
+
+    def _get_from_icu(self):
+        pass
+        
+    def _get_from_ldml(self):
+        pass
+
+    def _get_exemplars(self):
+        if self.use_icu:
+            exemplars = self._get_from_icu()
+        else:
+            exemplars = self._get_from_ldml()
+        return exemplars
+    
+    def to_list(self) -> list[str]:
+        return list(self._exemplars)
+    
+    def to_pattern(self) -> str:
+        return self._exemplars.toPattern()
+    
+    def to_unicode_set(self) -> _icu.UnicodeSet:
+        return self._exemplars
+
+class CLDR():
+    def __init__(self, locale_id:str, use_icu: bool = False):
+        self._locale_id = locale_id.replace('-', '_')
+        self._use_icu = use_icu
+
+    def _get_from_icu(self, ex_type: str):
+        return _icu.LocaleData(self._locale_id).getExemplarSet(0, ex_type)
+
+    def get_exemplars(self, ex_type='main'):
+        pass
+        
 
     def __repr__(self):
         class_name = type(self).__name__

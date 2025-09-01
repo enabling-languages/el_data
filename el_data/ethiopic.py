@@ -615,6 +615,7 @@ def expand_range(char_range: str, filtered: bool = True) -> list[str, int]:
                     results.append(item)
                 else:
                     results = results + list(_icu.UnicodeSet(rf'[{item}]'))
+    print(results)
     if not any([isinstance(x, int) for x in results]):
         results = [x for x in results if x in family_ids] if filtered else results
     return results
